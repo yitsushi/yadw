@@ -33,6 +33,16 @@ func main() {
 		StopOnError: true,
 		Result:      nil,
 	})
+	wfl.AddJob(&workflow.Job{
+		Name:  "Ping",
+		Image: "alpine:latest",
+		Commands: [][]string{
+			{"ping", "-c", "3", "github.com"},
+		},
+		Environment: []string{},
+		StopOnError: true,
+		Result:      nil,
+	})
 
 	wfl.Execute(context.Background())
 

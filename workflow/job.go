@@ -3,7 +3,7 @@ package workflow
 import (
 	"bytes"
 	"context"
-	"log"
+	"fmt"
 	"strings"
 	"time"
 
@@ -119,7 +119,7 @@ func (job *Job) runCommand(ctx *jobContext, command []string) CommandResult {
 		Error:       nil,
 	}
 
-	log.Printf("[%s] Executing '%s' in '%s'", time.Now(), strings.Join(command, " "), job.Image)
+	fmt.Printf("[%s] Executing '%s' in '%s'\n", time.Now(), strings.Join(command, " "), job.Image)
 
 	execConfig := job.execConfig(command)
 
@@ -171,6 +171,8 @@ func (job *Job) runCommand(ctx *jobContext, command []string) CommandResult {
 func (job *Job) Run(ctx context.Context, client *docker.Client) {
 	var err error
 
+	fmt.Printf("Job setup: %s\n", job.Name)
+
 	job.Result = &JobResult{
 		Commands: make([]CommandResult, 0),
 		Error:    nil,
@@ -205,6 +207,8 @@ func (job *Job) Run(ctx context.Context, client *docker.Client) {
 	for _, command := range job.Commands {
 		job.Result.AddCommandResult(job.runCommand(jobCtx, command))
 	}
+
+	fmt.Printf("Job teardown: %s\n", job.Name)
 
 	err = client.ContainerStop(ctx, jobCtx.ContainerID, nil)
 	if err != nil {
