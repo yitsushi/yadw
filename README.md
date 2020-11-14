@@ -42,7 +42,7 @@ func main() {
 		}
 
 		for _, command := range job.Result.Commands {
-			if job.Result.Error != nil {
+			if command.Error != nil {
 				log.Printf("Command level error on %s: %s", command.Command, command.Error.Error())
 			}
 
